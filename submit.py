@@ -19,26 +19,25 @@ else:
 
 # End Python 2/3 compatibility
 
-_DEFAULT_CONFIG = '/etc/kattis/submit/kattisrc'
+_DEFAULT_CONFIG = '/usr/local/etc/kattisrc'
 _VERSION = 'Version: $Version: $'
 _LANGUAGE_GUESS = {
-    '.c': 'C',
-    '.c#': 'C#',
-    '.c++': 'C++',
-    '.cc': 'C++',
-    '.cpp': 'C++',
-    '.cs': 'C#',
-    '.cxx': 'C++',
-    '.go': 'Go',
-    '.h': 'C++',
-    '.hs': 'Haskell',
     '.java': 'Java',
-    '.js': 'JavaScript',
-    '.m': 'Objective-C',
-    '.pas': 'Pascal',
-    '.php': 'PHP',
-    '.pl': 'Prolog',
+    '.c': 'C',
+    '.cpp': 'C++',
+    '.h': 'C++',
+    '.cc': 'C++',
+    '.cxx': 'C++',
+    '.c++': 'C++',
     '.py': 'Python',
+    '.cs': 'C#',
+    '.c#': 'C#',
+    '.go': 'Go',
+    '.m': 'Objective-C',
+    '.hs': 'Haskell',
+    '.pl': 'Prolog',
+    '.js': 'JavaScript',
+    '.php': 'PHP',
     '.rb': 'Ruby'
 }
 _GUESS_MAINCLASS = {'Java', 'Python'}
@@ -69,14 +68,12 @@ def get_config():
                      os.path.join(os.path.dirname(sys.argv[0]), '.kattisrc')]):
         raise ConfigError('''\
 I failed to read in a config file from your home directory or from the
-same directory as this script. Please go to your Kattis installation
-to download a .kattisrc file.
-
+same directory as this script. To download a .kattisrc file please visit 
+https://<kattis>/download/kattisrc
 The file should look something like this:
 [user]
 username: yourusername
 token: *********
-
 [kattis]
 loginurl: https://<kattis>/login
 submissionurl: https://<kattis>/submit''')
@@ -85,9 +82,7 @@ submissionurl: https://<kattis>/submit''')
 
 def login(login_url, username, password=None, token=None):
     """Log in to Kattis.
-
     At least one of password or token needs to be provided.
-
     Returns a requests.Response with cookies needed to be able to submit
     """
     login_args = {'user': username, 'script': 'true'}
@@ -101,7 +96,6 @@ def login(login_url, username, password=None, token=None):
 
 def login_from_config(cfg):
     """Log in to Kattis using the access information in a kattisrc file
-
     Returns a requests.Response with cookies needed to be able to submit
     """
     username = cfg.get('user', 'username')
@@ -118,7 +112,6 @@ def login_from_config(cfg):
         raise ConfigError('''\
 Your .kattisrc file appears corrupted. It must provide a token (or a
 KATTIS password).
-
 Please download a new .kattisrc file''')
 
     loginurl = get_url(cfg, 'loginurl', 'login')
@@ -127,10 +120,8 @@ Please download a new .kattisrc file''')
 
 def submit(submit_url, cookies, problem, language, files, mainclass='', tag=''):
     """Make a submission.
-
     The url_opener argument is an OpenerDirector object to use (as
     returned by the login() function)
-
     Returns the requests.Result from the submission
     """
 

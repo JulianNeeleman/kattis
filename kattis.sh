@@ -33,6 +33,11 @@ if [ -f "src/${problem}.cpp" ]; then
 		exit 1
 	fi
 
+	# Create samples directory if needed.
+	if [ ! -d "samples" ]; then
+		mkdir samples
+	fi
+
 	# Check if directory already exists.
 	if [ ! -d "samples/${problem}" ]; then
 	    echo "Downloading samples..."
@@ -59,23 +64,27 @@ if [ -f "src/${problem}.cpp" ]; then
 
 	echo "Running samples..."
 	for input in samples/${problem}/*.in; do
-		output=${input%.in}.ans
-		echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-		echo "------------------------------------------"
+		ans=${input%.in}.ans
+		output=${input%.in}.out
 		echo "Sample input file: ${input##*/}"
-		echo "------------------------------------------"
 
-		bin/${problem}.out < ${input}
+		# Run the code.
+		bin/${problem}.out < ${input} > ${output}
 
-		if [ -f "${output}" ]; then
-			echo "------------------------------------------"
-			echo "Sample output file: ${output##*/}"
-			echo "------------------------------------------"
-
-			cat ${output}
+		# If all files were correctly generated,
+		# we can check the diff.
+		if [ -f "${ans}" ] && [ -f "${output}" ]; then
+			dif=$(diff -b "${ans}" "${output}") 
+			if [ "${dif}" != "" ]; then
+			    echo "Output:"
+			    cat ${output}
+			    echo "Answer:"
+			    cat ${ans}
+			else
+				echo "Passed."
+			fi
 		fi
 	done
-	echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 	echo "Done."
 else
    	echo "Setting up code template..."
